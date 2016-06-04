@@ -1,0 +1,13 @@
+{
+  "meta": {
+    "firebase": {
+      "build": false
+    },
+    "aurelia-dependency-injection": {
+      "build": false
+    },
+    "aurelia-logging": {
+      "build": false
+    }
+  }
+}

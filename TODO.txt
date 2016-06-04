@@ -1,0 +1,5 @@
+jspm build aurelia-firebase - firebase - aurelia-dependency-injection - aurelia-logging - aurelia-metadata - aurelia-pal dist/jspm/aurelia-firebase.js --format cjs --skip-source-maps
+jspm build aurelia-firebase dist/jspm/aurelia-firebase.js --format cjs --skip-source-maps --config jspm.build.json
+
+
+
