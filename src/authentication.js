@@ -7,6 +7,11 @@ export class AuthenticationService {
   firebase;
   logger;
 
+  constructor(firebase) {
+    this.logger = getLogger('AuthenticationService');
+    this.firebase = firebase;
+  }
+
   get interceptor() {
     return request => {
       if (request instanceof Request) {
@@ -24,11 +29,6 @@ export class AuthenticationService {
     };
   }
 
-  constructor(firebase) {
-    this.logger = getLogger('AuthenticationService');
-    this.firebase = firebase;
-  }
-
   getToken() {
     let currentUser = this.firebase.native.auth().currentUser;
     return currentUser ? currentUser.getToken() : Promise.resolve();
@@ -41,7 +41,7 @@ export class AuthenticationService {
   login(email, password) {
     this.logger.debug('trying to login...');
     return this.firebase.native.auth().signInWithEmailAndPassword(email, password)
-      .then(result => {
+      .then(() => {
         this.logger.debug('user logged in successfully');
       })
       .catch(err => {

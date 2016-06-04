@@ -1,11 +1,15 @@
 import * as ns from '../../src/index';
+import {AuthenticationService} from '../../src/authentication';
+import {Config} from '../../src/config';
 
 describe('index', () => {
   it('AuthenticationService', () => {
-    expect(typeof ns.AuthenticationService).toEqual('function');
+    expect(ns.AuthenticationService).toEqual(AuthenticationService);
   });
 
   it('configure', () => {
-    expect(typeof ns.configure).toEqual('function');
+    let callback = jasmine.createSpy('callback');
+    ns.configure(null, callback);
+    expect(callback).toHaveBeenCalledWith(jasmine.any(Config));
   });
 });

@@ -1,9 +1,10 @@
-let config = {
+let baseConfig = {
   apiKey: null,
   authDomain: null,
   databaseURL: null,
   storageBucket: null
 };
+let config = Object.assign({}, baseConfig);
 
 export class Config {
   configure(userConfig) {
@@ -16,6 +17,13 @@ export class Config {
   }
 
   get current() {
-    return Object.assign({}, config);
+    let current = {};
+    Object.assign(current, config);
+    Object.freeze(current);
+    return current;
   }
+}
+
+export function resetGlobalConfigForTesting() {
+  config = Object.assign({}, baseConfig);
 }

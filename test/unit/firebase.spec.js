@@ -1,4 +1,4 @@
-import {Config} from '../../src/config';
+import {Config, resetGlobalConfigForTesting} from '../../src/config';
 import {Firebase} from '../../src/firebase';
 
 describe('Firebase', () => {
@@ -11,5 +11,9 @@ describe('Firebase', () => {
   it('firebase', () => {
     expect(() => firebase = new Firebase(config)).toThrowError(
         'Your API key is invalid, please check you have copied it correctly.');
+  });
+
+  afterEach(() => {
+    resetGlobalConfigForTesting();
   });
 });
