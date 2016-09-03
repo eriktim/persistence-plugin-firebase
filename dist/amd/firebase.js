@@ -6,6 +6,12 @@ define(['exports', 'aurelia-dependency-injection', 'aurelia-logging', './authent
   });
   exports.Firebase = undefined;
 
+  var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
+    return typeof obj;
+  } : function (obj) {
+    return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj;
+  };
+
   function _toArray(arr) {
     return Array.isArray(arr) ? arr : Array.from(arr);
   }
@@ -111,7 +117,10 @@ define(['exports', 'aurelia-dependency-injection', 'aurelia-logging', './authent
             var isArray = Array.isArray(data);
             (isArray ? data : [data]).forEach(function (obj) {
               for (var key in obj) {
-                obj[key][PRIMARY_KEY] = key;
+                var value = obj[key];
+                if ((typeof value === 'undefined' ? 'undefined' : _typeof(value)) === 'object' && value) {
+                  value[PRIMARY_KEY] = key;
+                }
               }
             });
             return data;

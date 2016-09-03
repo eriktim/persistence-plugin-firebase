@@ -53,7 +53,10 @@ export class Firebase {
           let isArray = Array.isArray(data);
           (isArray ? data : [data]).forEach(obj => {
             for (let key in obj) {
-              obj[key][PRIMARY_KEY] = key;
+              let value = obj[key];
+              if (typeof value === 'object' && value) {
+                value[PRIMARY_KEY] = key;
+              }
             }
           });
           return data;

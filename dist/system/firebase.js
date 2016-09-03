@@ -3,7 +3,7 @@
 System.register(['aurelia-dependency-injection', 'aurelia-logging', 'firebase', './authentication', './config'], function (_export, _context) {
   "use strict";
 
-  var inject, getLogger, Authentication, Config, _createClass, _dec, _class, PRIMARY_KEY, Firebase;
+  var inject, getLogger, Authentication, Config, _typeof, _createClass, _dec, _class, PRIMARY_KEY, Firebase;
 
   function _toArray(arr) {
     return Array.isArray(arr) ? arr : Array.from(arr);
@@ -26,6 +26,12 @@ System.register(['aurelia-dependency-injection', 'aurelia-logging', 'firebase', 
       Config = _config.Config;
     }],
     execute: function () {
+      _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
+        return typeof obj;
+      } : function (obj) {
+        return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj;
+      };
+
       _createClass = function () {
         function defineProperties(target, props) {
           for (var i = 0; i < props.length; i++) {
@@ -119,7 +125,10 @@ System.register(['aurelia-dependency-injection', 'aurelia-logging', 'firebase', 
                 var isArray = Array.isArray(data);
                 (isArray ? data : [data]).forEach(function (obj) {
                   for (var key in obj) {
-                    obj[key][PRIMARY_KEY] = key;
+                    var value = obj[key];
+                    if ((typeof value === 'undefined' ? 'undefined' : _typeof(value)) === 'object' && value) {
+                      value[PRIMARY_KEY] = key;
+                    }
                   }
                 });
                 return data;
