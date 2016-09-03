@@ -1,4 +1,5 @@
 import {inject} from 'aurelia-dependency-injection';
+import {getLogger} from 'aurelia-logging';
 import 'firebase';
 
 import {Authentication} from './authentication';
@@ -13,6 +14,7 @@ export class Firebase {
   url;
 
   constructor(config) {
+    this.logger = getLogger('Firebase');
     this.url = config.databaseURL;
     this.native = firebase;
     this.native.initializeApp(config.current);
@@ -24,7 +26,7 @@ export class Firebase {
       if (!(request instanceof Request)) {
         return Promise.resolve(request);
       }
-      return this.getToken()
+      return this.authentication.getToken()
         .then(token => {
           let [path, ...params] = request.url.split('?');
           let url = `${path}.json?auth=${[token, params.join('?')].join('&')}`;
@@ -43,6 +45,7 @@ export class Firebase {
           }
           return null;
         })
+        .catch(err => this.logger.error('request failed', err))
         .then(data => {
           if (!data) {
             return null;

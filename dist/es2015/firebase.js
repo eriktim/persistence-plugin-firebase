@@ -1,6 +1,7 @@
 var _dec, _class;
 
 import { inject } from 'aurelia-dependency-injection';
+import { getLogger } from 'aurelia-logging';
 import 'firebase';
 
 import { Authentication } from './authentication';
@@ -11,6 +12,7 @@ const PRIMARY_KEY = '_id';
 export let Firebase = (_dec = inject(Config), _dec(_class = class Firebase {
 
   constructor(config) {
+    this.logger = getLogger('Firebase');
     this.url = config.databaseURL;
     this.native = firebase;
     this.native.initializeApp(config.current);
@@ -22,7 +24,7 @@ export let Firebase = (_dec = inject(Config), _dec(_class = class Firebase {
       if (!(request instanceof Request)) {
         return Promise.resolve(request);
       }
-      return this.getToken().then(token => {
+      return this.authentication.getToken().then(token => {
         let [path, ...params] = request.url.split('?');
         let url = `${ path }.json?auth=${ [token, params.join('?')].join('&') }`;
         let init = {};
@@ -36,7 +38,7 @@ export let Firebase = (_dec = inject(Config), _dec(_class = class Firebase {
           }
         }
         return null;
-      }).then(data => {
+      }).catch(err => this.logger.error('request failed', err)).then(data => {
         if (!data) {
           return null;
         }

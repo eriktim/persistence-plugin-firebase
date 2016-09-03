@@ -1,9 +1,9 @@
 'use strict';
 
-System.register(['aurelia-dependency-injection', 'firebase', './authentication', './config'], function (_export, _context) {
+System.register(['aurelia-dependency-injection', 'aurelia-logging', 'firebase', './authentication', './config'], function (_export, _context) {
   "use strict";
 
-  var inject, Authentication, Config, _createClass, _dec, _class, PRIMARY_KEY, Firebase;
+  var inject, getLogger, Authentication, Config, _createClass, _dec, _class, PRIMARY_KEY, Firebase;
 
   function _toArray(arr) {
     return Array.isArray(arr) ? arr : Array.from(arr);
@@ -18,6 +18,8 @@ System.register(['aurelia-dependency-injection', 'firebase', './authentication',
   return {
     setters: [function (_aureliaDependencyInjection) {
       inject = _aureliaDependencyInjection.inject;
+    }, function (_aureliaLogging) {
+      getLogger = _aureliaLogging.getLogger;
     }, function (_firebase) {}, function (_authentication4) {
       Authentication = _authentication4.Authentication;
     }, function (_config) {
@@ -48,6 +50,7 @@ System.register(['aurelia-dependency-injection', 'firebase', './authentication',
         function Firebase(config) {
           _classCallCheck(this, Firebase);
 
+          this.logger = getLogger('Firebase');
           this.url = config.databaseURL;
           this.native = firebase;
           this.native.initializeApp(config.current);
@@ -84,7 +87,7 @@ System.register(['aurelia-dependency-injection', 'firebase', './authentication',
               if (!(request instanceof Request)) {
                 return Promise.resolve(request);
               }
-              return _this.getToken().then(function (token) {
+              return _this.authentication.getToken().then(function (token) {
                 var _request$url$split = request.url.split('?');
 
                 var _request$url$split2 = _toArray(_request$url$split);
@@ -107,6 +110,8 @@ System.register(['aurelia-dependency-injection', 'firebase', './authentication',
                   }
                 }
                 return null;
+              }).catch(function (err) {
+                return _this.logger.error('request failed', err);
               }).then(function (data) {
                 if (!data) {
                   return null;

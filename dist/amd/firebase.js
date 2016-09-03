@@ -1,4 +1,4 @@
-define(['exports', 'aurelia-dependency-injection', './authentication', './config', 'firebase'], function (exports, _aureliaDependencyInjection, _authentication4, _config) {
+define(['exports', 'aurelia-dependency-injection', 'aurelia-logging', './authentication', './config', 'firebase'], function (exports, _aureliaDependencyInjection, _aureliaLogging, _authentication4, _config) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
@@ -42,6 +42,7 @@ define(['exports', 'aurelia-dependency-injection', './authentication', './config
     function Firebase(config) {
       _classCallCheck(this, Firebase);
 
+      this.logger = (0, _aureliaLogging.getLogger)('Firebase');
       this.url = config.databaseURL;
       this.native = firebase;
       this.native.initializeApp(config.current);
@@ -78,7 +79,7 @@ define(['exports', 'aurelia-dependency-injection', './authentication', './config
           if (!(request instanceof Request)) {
             return Promise.resolve(request);
           }
-          return _this.getToken().then(function (token) {
+          return _this.authentication.getToken().then(function (token) {
             var _request$url$split = request.url.split('?');
 
             var _request$url$split2 = _toArray(_request$url$split);
@@ -101,6 +102,8 @@ define(['exports', 'aurelia-dependency-injection', './authentication', './config
               }
             }
             return null;
+          }).catch(function (err) {
+            return _this.logger.error('request failed', err);
           }).then(function (data) {
             if (!data) {
               return null;

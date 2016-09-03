@@ -11,6 +11,8 @@ var _dec, _class;
 
 var _aureliaDependencyInjection = require('aurelia-dependency-injection');
 
+var _aureliaLogging = require('aurelia-logging');
+
 require('firebase');
 
 var _authentication4 = require('./authentication');
@@ -27,6 +29,7 @@ var Firebase = exports.Firebase = (_dec = (0, _aureliaDependencyInjection.inject
   function Firebase(config) {
     _classCallCheck(this, Firebase);
 
+    this.logger = (0, _aureliaLogging.getLogger)('Firebase');
     this.url = config.databaseURL;
     this.native = firebase;
     this.native.initializeApp(config.current);
@@ -63,7 +66,7 @@ var Firebase = exports.Firebase = (_dec = (0, _aureliaDependencyInjection.inject
         if (!(request instanceof Request)) {
           return Promise.resolve(request);
         }
-        return _this.getToken().then(function (token) {
+        return _this.authentication.getToken().then(function (token) {
           var _request$url$split = request.url.split('?');
 
           var _request$url$split2 = _toArray(_request$url$split);
@@ -86,6 +89,8 @@ var Firebase = exports.Firebase = (_dec = (0, _aureliaDependencyInjection.inject
             }
           }
           return null;
+        }).catch(function (err) {
+          return _this.logger.error('request failed', err);
         }).then(function (data) {
           if (!data) {
             return null;
