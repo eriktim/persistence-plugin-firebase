@@ -1,14 +1,10 @@
-define(['exports', 'aurelia-logging', 'aurelia-dependency-injection', './firebase'], function (exports, _aureliaLogging, _aureliaDependencyInjection, _firebase) {
+define(['exports', 'aurelia-logging'], function (exports, _aureliaLogging) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
-  exports.AuthenticationService = undefined;
-
-  function _toArray(arr) {
-    return Array.isArray(arr) ? arr : Array.from(arr);
-  }
+  exports.Authentication = undefined;
 
   function _classCallCheck(instance, Constructor) {
     if (!(instance instanceof Constructor)) {
@@ -34,81 +30,50 @@ define(['exports', 'aurelia-logging', 'aurelia-dependency-injection', './firebas
     };
   }();
 
-  var _dec, _class;
+  var Authentication = exports.Authentication = function () {
+    function Authentication(firebase) {
+      _classCallCheck(this, Authentication);
 
-  var AuthenticationService = exports.AuthenticationService = (_dec = (0, _aureliaDependencyInjection.inject)(_firebase.Firebase), _dec(_class = function () {
-    _createClass(AuthenticationService, [{
-      key: 'interceptor',
-      get: function get() {
-        var _this = this;
-
-        return function (request) {
-          if (request instanceof Request) {
-            return _this.getToken().then(function (token) {
-              var _request$url$split = request.url.split('?');
-
-              var _request$url$split2 = _toArray(_request$url$split);
-
-              var path = _request$url$split2[0];
-
-              var params = _request$url$split2.slice(1);
-
-              var url = path + '.json?auth=' + [token, params.join('?')].join('&');
-              var init = {};
-              ['method', 'headers', 'body', 'mode', 'credentials', 'cache', 'redirect', 'referrer', 'integrity'].forEach(function (prop) {
-                return init[prop] = request[prop];
-              });
-              return new Request(url, init);
-            });
-          }
-          return Promise.resolve(request);
-        };
-      }
-    }]);
-
-    function AuthenticationService(firebase) {
-      _classCallCheck(this, AuthenticationService);
-
-      this.logger = (0, _aureliaLogging.getLogger)('AuthenticationService');
+      this.logger = (0, _aureliaLogging.getLogger)('Authentication');
       this.firebase = firebase;
     }
 
-    _createClass(AuthenticationService, [{
+    _createClass(Authentication, [{
       key: 'getToken',
       value: function getToken() {
         var currentUser = this.firebase.native.auth().currentUser;
         return currentUser ? currentUser.getToken() : Promise.resolve();
       }
     }, {
-      key: 'isLoggedIn',
-      value: function isLoggedIn() {
+      key: 'isSignedIn',
+      value: function isSignedIn() {
         return !!this.firebase.native.auth().currentUser;
       }
     }, {
-      key: 'login',
-      value: function login(email, password) {
-        var _this2 = this;
+      key: 'signIn',
+      value: function signIn(email, password) {
+        var _this = this;
 
         this.logger.debug('trying to login...');
         return this.firebase.native.auth().signInWithEmailAndPassword(email, password).then(function (result) {
-          _this2.logger.debug('user logged in successfully');
+          _this.logger.debug('user logged in successfully');
         }).catch(function (err) {
           var msg = 'authentication failed';
-          _this2.logger.error(err);
+          _this.logger.error(err);
           throw new Error(msg);
         });
       }
     }, {
-      key: 'logout',
-      value: function logout() {
-        var _this3 = this;
+      key: 'signOut',
+      value: function signOut() {
+        var _this2 = this;
 
         return this.firebase.native.auth().signOut().then(function () {
-          return _this3.logger.debug('user logged out successfully');
+          return _this2.logger.debug('user logged out successfully');
         });
       }
     }]);
 
-    return AuthenticationService;
-  }()) || _class);
+    return Authentication;
+  }();
 });

@@ -1,15 +1,8 @@
-define(['exports', './authentication', './config'], function (exports, _authentication, _config) {
+define(['exports', './config'], function (exports, _config) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
     value: true
-  });
-  exports.AuthenticationService = undefined;
-  Object.defineProperty(exports, 'AuthenticationService', {
-    enumerable: true,
-    get: function () {
-      return _authentication.AuthenticationService;
-    }
   });
   exports.configure = configure;
 
