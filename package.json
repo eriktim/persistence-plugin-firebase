@@ -1,21 +1,21 @@
 {
-  "name": "aurelia-firebase",
+  "name": "aurelia-firebase-rest",
   "version": "0.1.0",
-  "description": "Use Firebase with Aurelia.",
+  "description": "Integrate the Firebase REST API with Aurelia.",
   "keywords": [
     "aurelia",
     "firebase"
   ],
-  "homepage": "http://github.com/trenneman/aurelia-firebase",
+  "homepage": "http://github.com/trenneman/aurelia-firebase-rest",
   "bugs": {
-    "url": "https://github.com/trenneman/aurelia-firebase/issues"
+    "url": "https://github.com/trenneman/aurelia-firebase-rest/issues"
   },
   "license": "LGPL-3.0",
   "author": "Erik Timmers <e.timmers@gmail.com>",
   "main": "dist/commonjs/index.js",
   "repository": {
     "type": "git",
-    "url": "http://github.com/trenneman/aurelia-firebase"
+    "url": "http://github.com/trenneman/aurelia-firebase-rest"
   },
   "devDependencies": {
     "aurelia-tools": "^0.1.22",
@@ -62,8 +62,8 @@
       "dist": "dist/amd"
     },
     "dependencies": {
-      "aurelia-dependency-injection": "^1.0.0-beta.1.2.3",
-      "aurelia-logging": "^1.0.0-beta.1.2.1",
+      "aurelia-dependency-injection": "^1.0.0",
+      "aurelia-logging": "^1.0.0",
       "firebase": "^3.3.0"
     },
     "devDependencies": {}

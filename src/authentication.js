@@ -1,31 +1,11 @@
 import {getLogger} from 'aurelia-logging';
-import {inject} from 'aurelia-dependency-injection';
-import {Firebase} from './firebase';
 
-@inject(Firebase)
-export class AuthenticationService {
+export class Authentication {
   firebase;
   logger;
 
-  get interceptor() {
-    return request => {
-      if (request instanceof Request) {
-        return this.getToken().then(token => {
-          let [path, ...params] = request.url.split('?');
-          let url = `${path}.json?auth=${[token, params.join('?')].join('&')}`;
-          let init = {};
-          ['method', 'headers', 'body', 'mode', 'credentials',
-            'cache', 'redirect', 'referrer', 'integrity']
-              .forEach(prop => init[prop] = request[prop]);
-          return new Request(url, init);
-        });
-      }
-      return Promise.resolve(request);
-    };
-  }
-
   constructor(firebase) {
-    this.logger = getLogger('AuthenticationService');
+    this.logger = getLogger('Authentication');
     this.firebase = firebase;
   }
 
@@ -34,11 +14,11 @@ export class AuthenticationService {
     return currentUser ? currentUser.getToken() : Promise.resolve();
   }
 
-  isLoggedIn() {
+  isSignedIn() {
     return !!this.firebase.native.auth().currentUser;
   }
 
-  login(email, password) {
+  signIn(email, password) {
     this.logger.debug('trying to login...');
     return this.firebase.native.auth().signInWithEmailAndPassword(email, password)
       .then(result => {
@@ -51,7 +31,7 @@ export class AuthenticationService {
       });
   }
 
-  logout() {
+  signOut() {
     return this.firebase.native.auth().signOut()
       .then(() => this.logger.debug('user logged out successfully'));
   }

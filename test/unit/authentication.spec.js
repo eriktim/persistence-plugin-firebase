@@ -1,7 +1,7 @@
-import {AuthenticationService} from '../../src/authentication';
+import {Authentication} from '../../src/authentication';
 
 describe('authentication', () => {
-  let authenticationService;
+  let authentication;
 
   beforeEach(() => {
     //authenticationService = new AuthenticationService();

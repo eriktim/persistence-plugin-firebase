@@ -16,7 +16,7 @@ module.exports = function(config) {
       loadFiles: ['test/unit/**/*.js'],
       serveFiles: ['src/**/*.js'],
       paths: {
-        '*': '*',
+        '*': 'src/*',
         'github:*': 'jspm_packages/github/*',
         'npm:*': 'jspm_packages/npm/*'
       }

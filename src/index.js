@@ -1,5 +1,4 @@
 import {Config} from './config';
-export {AuthenticationService} from './authentication';
 
 const baseConfig = {
   apiKey: null,
