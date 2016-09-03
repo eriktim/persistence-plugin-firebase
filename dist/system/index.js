@@ -1,6 +1,6 @@
 'use strict';
 
-System.register(['./config'], function (_export, _context) {
+System.register(['./config', './firebase'], function (_export, _context) {
   "use strict";
 
   var Config, baseConfig;
@@ -17,6 +17,11 @@ System.register(['./config'], function (_export, _context) {
   return {
     setters: [function (_config) {
       Config = _config.Config;
+    }, function (_firebase) {
+      var _exportObj = {};
+      _exportObj.Firebase = _firebase.Firebase;
+
+      _export(_exportObj);
     }],
     execute: function () {
       baseConfig = {

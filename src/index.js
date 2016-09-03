@@ -1,5 +1,7 @@
 import {Config} from './config';
 
+export {Firebase} from './firebase';
+
 const baseConfig = {
   apiKey: null,
   authDomain: null,

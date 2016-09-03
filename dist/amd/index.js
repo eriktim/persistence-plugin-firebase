@@ -1,8 +1,15 @@
-define(['exports', './config'], function (exports, _config) {
+define(['exports', './firebase', './config'], function (exports, _firebase, _config) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
     value: true
+  });
+  exports.Firebase = undefined;
+  Object.defineProperty(exports, 'Firebase', {
+    enumerable: true,
+    get: function () {
+      return _firebase.Firebase;
+    }
   });
   exports.configure = configure;
 
