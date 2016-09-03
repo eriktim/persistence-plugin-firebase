@@ -58,6 +58,10 @@ export class Firebase {
     };
   }
 
+  isSignedIn(...args) {
+    return this.authentication.isSignedIn(...args);
+  }
+
   signIn(...args) {
     return this.authentication.signIn(...args);
   }

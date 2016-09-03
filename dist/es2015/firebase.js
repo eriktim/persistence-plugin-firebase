@@ -51,6 +51,10 @@ export let Firebase = (_dec = inject(Config), _dec(_class = class Firebase {
     };
   }
 
+  isSignedIn(...args) {
+    return this.authentication.isSignedIn(...args);
+  }
+
   signIn(...args) {
     return this.authentication.signIn(...args);
   }

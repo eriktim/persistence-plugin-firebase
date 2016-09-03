@@ -18,8 +18,8 @@ System.register(['aurelia-dependency-injection', 'firebase', './authentication',
   return {
     setters: [function (_aureliaDependencyInjection) {
       inject = _aureliaDependencyInjection.inject;
-    }, function (_firebase) {}, function (_authentication3) {
-      Authentication = _authentication3.Authentication;
+    }, function (_firebase) {}, function (_authentication4) {
+      Authentication = _authentication4.Authentication;
     }, function (_config) {
       Config = _config.Config;
     }],
@@ -55,18 +55,25 @@ System.register(['aurelia-dependency-injection', 'firebase', './authentication',
         }
 
         _createClass(Firebase, [{
-          key: 'signIn',
-          value: function signIn() {
+          key: 'isSignedIn',
+          value: function isSignedIn() {
             var _authentication;
 
-            return (_authentication = this.authentication).signIn.apply(_authentication, arguments);
+            return (_authentication = this.authentication).isSignedIn.apply(_authentication, arguments);
+          }
+        }, {
+          key: 'signIn',
+          value: function signIn() {
+            var _authentication2;
+
+            return (_authentication2 = this.authentication).signIn.apply(_authentication2, arguments);
           }
         }, {
           key: 'signOut',
           value: function signOut() {
-            var _authentication2;
+            var _authentication3;
 
-            return (_authentication2 = this.authentication).signOut.apply(_authentication2, arguments);
+            return (_authentication3 = this.authentication).signOut.apply(_authentication3, arguments);
           }
         }, {
           key: 'interceptor',

@@ -13,7 +13,7 @@ var _aureliaDependencyInjection = require('aurelia-dependency-injection');
 
 require('firebase');
 
-var _authentication3 = require('./authentication');
+var _authentication4 = require('./authentication');
 
 var _config = require('./config');
 
@@ -30,22 +30,29 @@ var Firebase = exports.Firebase = (_dec = (0, _aureliaDependencyInjection.inject
     this.url = config.databaseURL;
     this.native = firebase;
     this.native.initializeApp(config.current);
-    this.authentication = new _authentication3.Authentication(this);
+    this.authentication = new _authentication4.Authentication(this);
   }
 
   _createClass(Firebase, [{
-    key: 'signIn',
-    value: function signIn() {
+    key: 'isSignedIn',
+    value: function isSignedIn() {
       var _authentication;
 
-      return (_authentication = this.authentication).signIn.apply(_authentication, arguments);
+      return (_authentication = this.authentication).isSignedIn.apply(_authentication, arguments);
+    }
+  }, {
+    key: 'signIn',
+    value: function signIn() {
+      var _authentication2;
+
+      return (_authentication2 = this.authentication).signIn.apply(_authentication2, arguments);
     }
   }, {
     key: 'signOut',
     value: function signOut() {
-      var _authentication2;
+      var _authentication3;
 
-      return (_authentication2 = this.authentication).signOut.apply(_authentication2, arguments);
+      return (_authentication3 = this.authentication).signOut.apply(_authentication3, arguments);
     }
   }, {
     key: 'interceptor',
