@@ -1,18 +1,26 @@
+import 'console-polyfill';
+
 import { Config } from './config';
+import { Firebase } from './firebase';
 
-export { Firebase } from './firebase';
-
-const baseConfig = {
-  apiKey: null,
-  authDomain: null,
-  databaseURL: null,
-  storageBucket: null
-};
-
-export function configure(aurelia, callback) {
-  let config = new Config();
-  config.configure(baseConfig);
-  if (typeof callback === 'function') {
-    callback(config);
-  }
+export default function (userConfig) {
+  let config = Config.create(userConfig);
+  let firebase = new Firebase(config);
+  let baseUrl = config.databaseURL;
+  return {
+    baseUrl,
+    queryEntityMapperFactory: Entity => {
+      return data => {
+        let map = new Map();
+        for (let key in data) {
+          map.set(data[key], Entity);
+        }
+        return map;
+      };
+    },
+    fetchInterceptor: firebase.fetchInterceptor,
+    set: {
+      'firebase': firebase
+    }
+  };
 }

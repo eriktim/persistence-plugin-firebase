@@ -63,7 +63,7 @@
       "dist": "dist/amd"
     },
     "dependencies": {
-      "firebase": "^3.3.0"
+      "firebase": "3.3.0"
     },
     "devDependencies": {}
   },

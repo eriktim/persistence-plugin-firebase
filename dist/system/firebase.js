@@ -1,9 +1,9 @@
 'use strict';
 
-System.register(['aurelia-dependency-injection', 'aurelia-logging', 'firebase', './authentication', './config'], function (_export, _context) {
+System.register(['firebase', './authentication'], function (_export, _context) {
   "use strict";
 
-  var inject, getLogger, Authentication, Config, _typeof, _createClass, _dec, _class, PRIMARY_KEY, Firebase;
+  var Authentication, _typeof, _createClass, PRIMARY_KEY, Firebase;
 
   function _toArray(arr) {
     return Array.isArray(arr) ? arr : Array.from(arr);
@@ -16,14 +16,8 @@ System.register(['aurelia-dependency-injection', 'aurelia-logging', 'firebase', 
   }
 
   return {
-    setters: [function (_aureliaDependencyInjection) {
-      inject = _aureliaDependencyInjection.inject;
-    }, function (_aureliaLogging) {
-      getLogger = _aureliaLogging.getLogger;
-    }, function (_firebase) {}, function (_authentication4) {
+    setters: [function (_firebase) {}, function (_authentication4) {
       Authentication = _authentication4.Authentication;
-    }, function (_config) {
-      Config = _config.Config;
     }],
     execute: function () {
       _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
@@ -50,16 +44,15 @@ System.register(['aurelia-dependency-injection', 'aurelia-logging', 'firebase', 
         };
       }();
 
-      PRIMARY_KEY = '_id';
+      PRIMARY_KEY = '__id__';
 
-      _export('Firebase', Firebase = (_dec = inject(Config), _dec(_class = function () {
+      _export('Firebase', Firebase = function () {
         function Firebase(config) {
           _classCallCheck(this, Firebase);
 
-          this.logger = getLogger('Firebase');
           this.url = config.databaseURL;
           this.native = firebase;
-          this.native.initializeApp(config.current);
+          this.native.initializeApp(config);
           this.authentication = new Authentication(this);
         }
 
@@ -85,7 +78,7 @@ System.register(['aurelia-dependency-injection', 'aurelia-logging', 'firebase', 
             return (_authentication3 = this.authentication).signOut.apply(_authentication3, arguments);
           }
         }, {
-          key: 'interceptor',
+          key: 'fetchInterceptor',
           get: function get() {
             var _this = this;
 
@@ -104,10 +97,19 @@ System.register(['aurelia-dependency-injection', 'aurelia-logging', 'firebase', 
 
                 var url = path + '.json?auth=' + [token, params.join('?')].join('&');
                 var init = {};
-                ['method', 'headers', 'body', 'mode', 'credentials', 'cache', 'redirect', 'referrer', 'integrity'].forEach(function (prop) {
+                ['method', 'headers', 'mode', 'credentials', 'cache', 'redirect', 'referrer', 'integrity'].forEach(function (prop) {
                   return init[prop] = request[prop];
                 });
-                return fetch(url, init);
+                return Promise.resolve().then(function () {
+                  if (!['GET', 'HEAD'].includes(request.method)) {
+                    return request.blob();
+                  }
+                }).then(function (blob) {
+                  if (blob) {
+                    init.body = blob;
+                  }
+                  return fetch(url, init);
+                });
               }).then(function (response) {
                 if (response.ok) {
                   var contentType = response.headers.get('content-type');
@@ -117,7 +119,7 @@ System.register(['aurelia-dependency-injection', 'aurelia-logging', 'firebase', 
                 }
                 return null;
               }).catch(function (err) {
-                return _this.logger.error('request failed', err);
+                return console.error('request failed', err);
               }).then(function (data) {
                 if (!data) {
                   return null;
@@ -138,7 +140,7 @@ System.register(['aurelia-dependency-injection', 'aurelia-logging', 'firebase', 
         }]);
 
         return Firebase;
-      }()) || _class));
+      }());
 
       _export('Firebase', Firebase);
     }

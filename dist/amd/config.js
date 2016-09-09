@@ -29,34 +29,31 @@ define(["exports"], function (exports) {
     };
   }();
 
-  var config = {
-    apiKey: null,
-    authDomain: null,
-    databaseURL: null,
-    storageBucket: null
-  };
-
   var Config = exports.Config = function () {
-    function Config() {
-      _classCallCheck(this, Config);
-    }
-
-    _createClass(Config, [{
-      key: "configure",
-      value: function configure(userConfig) {
-        for (var key in userConfig) {
-          if (!Reflect.has(config, key)) {
-            throw new Error("unknown configuration key: " + key);
-          }
-          config[key] = userConfig[key];
-        }
-      }
-    }, {
-      key: "current",
-      get: function get() {
-        return Object.assign({}, config);
+    _createClass(Config, null, [{
+      key: "create",
+      value: function create(userConfig) {
+        return new Config(userConfig);
       }
     }]);
+
+    function Config(userConfig) {
+      _classCallCheck(this, Config);
+
+      var config = {
+        apiKey: null,
+        authDomain: null,
+        databaseURL: null,
+        storageBucket: null
+      };
+      for (var key in userConfig) {
+        if (!Reflect.has(config, key)) {
+          throw new Error("unknown configuration key: " + key);
+        }
+        config[key] = userConfig[key];
+      }
+      return config;
+    }
 
     return Config;
   }();

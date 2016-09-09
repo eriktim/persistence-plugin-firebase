@@ -9,32 +9,23 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _dec, _class;
-
-var _aureliaDependencyInjection = require('aurelia-dependency-injection');
-
-var _aureliaLogging = require('aurelia-logging');
-
 require('firebase');
 
 var _authentication4 = require('./authentication');
-
-var _config = require('./config');
 
 function _toArray(arr) { return Array.isArray(arr) ? arr : Array.from(arr); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var PRIMARY_KEY = '_id';
+var PRIMARY_KEY = '__id__';
 
-var Firebase = exports.Firebase = (_dec = (0, _aureliaDependencyInjection.inject)(_config.Config), _dec(_class = function () {
+var Firebase = exports.Firebase = function () {
   function Firebase(config) {
     _classCallCheck(this, Firebase);
 
-    this.logger = (0, _aureliaLogging.getLogger)('Firebase');
     this.url = config.databaseURL;
     this.native = firebase;
-    this.native.initializeApp(config.current);
+    this.native.initializeApp(config);
     this.authentication = new _authentication4.Authentication(this);
   }
 
@@ -60,7 +51,7 @@ var Firebase = exports.Firebase = (_dec = (0, _aureliaDependencyInjection.inject
       return (_authentication3 = this.authentication).signOut.apply(_authentication3, arguments);
     }
   }, {
-    key: 'interceptor',
+    key: 'fetchInterceptor',
     get: function get() {
       var _this = this;
 
@@ -79,10 +70,19 @@ var Firebase = exports.Firebase = (_dec = (0, _aureliaDependencyInjection.inject
 
           var url = path + '.json?auth=' + [token, params.join('?')].join('&');
           var init = {};
-          ['method', 'headers', 'body', 'mode', 'credentials', 'cache', 'redirect', 'referrer', 'integrity'].forEach(function (prop) {
+          ['method', 'headers', 'mode', 'credentials', 'cache', 'redirect', 'referrer', 'integrity'].forEach(function (prop) {
             return init[prop] = request[prop];
           });
-          return fetch(url, init);
+          return Promise.resolve().then(function () {
+            if (!['GET', 'HEAD'].includes(request.method)) {
+              return request.blob();
+            }
+          }).then(function (blob) {
+            if (blob) {
+              init.body = blob;
+            }
+            return fetch(url, init);
+          });
         }).then(function (response) {
           if (response.ok) {
             var contentType = response.headers.get('content-type');
@@ -92,7 +92,7 @@ var Firebase = exports.Firebase = (_dec = (0, _aureliaDependencyInjection.inject
           }
           return null;
         }).catch(function (err) {
-          return _this.logger.error('request failed', err);
+          return console.error('request failed', err);
         }).then(function (data) {
           if (!data) {
             return null;
@@ -113,4 +113,4 @@ var Firebase = exports.Firebase = (_dec = (0, _aureliaDependencyInjection.inject
   }]);
 
   return Firebase;
-}()) || _class);
+}();

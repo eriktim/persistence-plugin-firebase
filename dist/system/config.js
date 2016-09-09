@@ -3,7 +3,7 @@
 System.register([], function (_export, _context) {
   "use strict";
 
-  var _createClass, config, Config;
+  var _createClass, Config;
 
   function _classCallCheck(instance, Constructor) {
     if (!(instance instanceof Constructor)) {
@@ -32,34 +32,31 @@ System.register([], function (_export, _context) {
         };
       }();
 
-      config = {
-        apiKey: null,
-        authDomain: null,
-        databaseURL: null,
-        storageBucket: null
-      };
-
       _export("Config", Config = function () {
-        function Config() {
-          _classCallCheck(this, Config);
-        }
-
-        _createClass(Config, [{
-          key: "configure",
-          value: function configure(userConfig) {
-            for (var key in userConfig) {
-              if (!Reflect.has(config, key)) {
-                throw new Error("unknown configuration key: " + key);
-              }
-              config[key] = userConfig[key];
-            }
-          }
-        }, {
-          key: "current",
-          get: function get() {
-            return Object.assign({}, config);
+        _createClass(Config, null, [{
+          key: "create",
+          value: function create(userConfig) {
+            return new Config(userConfig);
           }
         }]);
+
+        function Config(userConfig) {
+          _classCallCheck(this, Config);
+
+          var config = {
+            apiKey: null,
+            authDomain: null,
+            databaseURL: null,
+            storageBucket: null
+          };
+          for (var key in userConfig) {
+            if (!Reflect.has(config, key)) {
+              throw new Error("unknown configuration key: " + key);
+            }
+            config[key] = userConfig[key];
+          }
+          return config;
+        }
 
         return Config;
       }());

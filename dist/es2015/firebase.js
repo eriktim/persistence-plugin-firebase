@@ -1,25 +1,19 @@
-var _dec, _class;
-
-import { inject } from 'aurelia-dependency-injection';
-import { getLogger } from 'aurelia-logging';
 import 'firebase';
 
 import { Authentication } from './authentication';
-import { Config } from './config';
 
-const PRIMARY_KEY = '_id';
+const PRIMARY_KEY = '__id__';
 
-export let Firebase = (_dec = inject(Config), _dec(_class = class Firebase {
+export let Firebase = class Firebase {
 
   constructor(config) {
-    this.logger = getLogger('Firebase');
     this.url = config.databaseURL;
     this.native = firebase;
-    this.native.initializeApp(config.current);
+    this.native.initializeApp(config);
     this.authentication = new Authentication(this);
   }
 
-  get interceptor() {
+  get fetchInterceptor() {
     return request => {
       if (!(request instanceof Request)) {
         return Promise.resolve(request);
@@ -28,8 +22,17 @@ export let Firebase = (_dec = inject(Config), _dec(_class = class Firebase {
         let [path, ...params] = request.url.split('?');
         let url = `${ path }.json?auth=${ [token, params.join('?')].join('&') }`;
         let init = {};
-        ['method', 'headers', 'body', 'mode', 'credentials', 'cache', 'redirect', 'referrer', 'integrity'].forEach(prop => init[prop] = request[prop]);
-        return fetch(url, init);
+        ['method', 'headers', 'mode', 'credentials', 'cache', 'redirect', 'referrer', 'integrity'].forEach(prop => init[prop] = request[prop]);
+        return Promise.resolve().then(() => {
+          if (!['GET', 'HEAD'].includes(request.method)) {
+            return request.blob();
+          }
+        }).then(blob => {
+          if (blob) {
+            init.body = blob;
+          }
+          return fetch(url, init);
+        });
       }).then(response => {
         if (response.ok) {
           let contentType = response.headers.get('content-type');
@@ -38,7 +41,7 @@ export let Firebase = (_dec = inject(Config), _dec(_class = class Firebase {
           }
         }
         return null;
-      }).catch(err => this.logger.error('request failed', err)).then(data => {
+      }).catch(err => console.error('request failed', err)).then(data => {
         if (!data) {
           return null;
         }
@@ -67,4 +70,4 @@ export let Firebase = (_dec = inject(Config), _dec(_class = class Firebase {
   signOut(...args) {
     return this.authentication.signOut(...args);
   }
-}) || _class);
+};

@@ -1,4 +1,4 @@
-define(['exports', 'aurelia-dependency-injection', 'aurelia-logging', './authentication', './config', 'firebase'], function (exports, _aureliaDependencyInjection, _aureliaLogging, _authentication4, _config) {
+define(['exports', './authentication', 'firebase'], function (exports, _authentication4) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
@@ -40,18 +40,15 @@ define(['exports', 'aurelia-dependency-injection', 'aurelia-logging', './authent
     };
   }();
 
-  var _dec, _class;
+  var PRIMARY_KEY = '__id__';
 
-  var PRIMARY_KEY = '_id';
-
-  var Firebase = exports.Firebase = (_dec = (0, _aureliaDependencyInjection.inject)(_config.Config), _dec(_class = function () {
+  var Firebase = exports.Firebase = function () {
     function Firebase(config) {
       _classCallCheck(this, Firebase);
 
-      this.logger = (0, _aureliaLogging.getLogger)('Firebase');
       this.url = config.databaseURL;
       this.native = firebase;
-      this.native.initializeApp(config.current);
+      this.native.initializeApp(config);
       this.authentication = new _authentication4.Authentication(this);
     }
 
@@ -77,7 +74,7 @@ define(['exports', 'aurelia-dependency-injection', 'aurelia-logging', './authent
         return (_authentication3 = this.authentication).signOut.apply(_authentication3, arguments);
       }
     }, {
-      key: 'interceptor',
+      key: 'fetchInterceptor',
       get: function get() {
         var _this = this;
 
@@ -96,10 +93,19 @@ define(['exports', 'aurelia-dependency-injection', 'aurelia-logging', './authent
 
             var url = path + '.json?auth=' + [token, params.join('?')].join('&');
             var init = {};
-            ['method', 'headers', 'body', 'mode', 'credentials', 'cache', 'redirect', 'referrer', 'integrity'].forEach(function (prop) {
+            ['method', 'headers', 'mode', 'credentials', 'cache', 'redirect', 'referrer', 'integrity'].forEach(function (prop) {
               return init[prop] = request[prop];
             });
-            return fetch(url, init);
+            return Promise.resolve().then(function () {
+              if (!['GET', 'HEAD'].includes(request.method)) {
+                return request.blob();
+              }
+            }).then(function (blob) {
+              if (blob) {
+                init.body = blob;
+              }
+              return fetch(url, init);
+            });
           }).then(function (response) {
             if (response.ok) {
               var contentType = response.headers.get('content-type');
@@ -109,7 +115,7 @@ define(['exports', 'aurelia-dependency-injection', 'aurelia-logging', './authent
             }
             return null;
           }).catch(function (err) {
-            return _this.logger.error('request failed', err);
+            return console.error('request failed', err);
           }).then(function (data) {
             if (!data) {
               return null;
@@ -130,5 +136,5 @@ define(['exports', 'aurelia-dependency-injection', 'aurelia-logging', './authent
     }]);
 
     return Firebase;
-  }()) || _class);
+  }();
 });

@@ -1,7 +1,6 @@
 import 'firebase';
 
 import {Authentication} from './authentication';
-import {Config} from './config';
 
 const PRIMARY_KEY = '__id__';
 
@@ -13,11 +12,11 @@ export class Firebase {
   constructor(config) {
     this.url = config.databaseURL;
     this.native = firebase;
-    this.native.initializeApp(config.current);
+    this.native.initializeApp(config);
     this.authentication = new Authentication(this);
   }
 
-  get interceptor() {
+  get fetchInterceptor() {
     return request => {
       if (!(request instanceof Request)) {
         return Promise.resolve(request);
@@ -30,10 +29,18 @@ export class Firebase {
           ['method', 'headers', 'mode', 'credentials',
             'cache', 'redirect', 'referrer', 'integrity']
               .forEach(prop => init[prop] = request[prop]);
-          return request.blob().then(blob => {
-            init.body = blob;
-            return fetch(url, init);
-          });
+          return Promise.resolve()
+            .then(() => {
+              if (!['GET', 'HEAD'].includes(request.method)) {
+                return request.blob();
+              }
+            })
+            .then(blob => {
+              if (blob) {
+                init.body = blob;
+              }
+              return fetch(url, init);
+            });
         })
         .then(response => {
           if (response.ok) {

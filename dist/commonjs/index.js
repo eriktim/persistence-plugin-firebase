@@ -3,31 +3,31 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.Firebase = undefined;
 
-var _firebase = require('./firebase');
+exports.default = function (userConfig) {
+  var config = _config.Config.create(userConfig);
+  var firebase = new _firebase.Firebase(config);
+  var baseUrl = config.databaseURL;
+  return {
+    baseUrl: baseUrl,
+    queryEntityMapperFactory: function queryEntityMapperFactory(Entity) {
+      return function (data) {
+        var map = new Map();
+        for (var key in data) {
+          map.set(data[key], Entity);
+        }
+        return map;
+      };
+    },
+    fetchInterceptor: firebase.fetchInterceptor,
+    set: {
+      'firebase': firebase
+    }
+  };
+};
 
-Object.defineProperty(exports, 'Firebase', {
-  enumerable: true,
-  get: function get() {
-    return _firebase.Firebase;
-  }
-});
-exports.configure = configure;
+require('console-polyfill');
 
 var _config = require('./config');
 
-var baseConfig = {
-  apiKey: null,
-  authDomain: null,
-  databaseURL: null,
-  storageBucket: null
-};
-
-function configure(aurelia, callback) {
-  var config = new _config.Config();
-  config.configure(baseConfig);
-  if (typeof callback === 'function') {
-    callback(config);
-  }
-}
+var _firebase = require('./firebase');

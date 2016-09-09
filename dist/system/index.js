@@ -1,35 +1,38 @@
 'use strict';
 
-System.register(['./config', './firebase'], function (_export, _context) {
+System.register(['console-polyfill', './config', './firebase'], function (_export, _context) {
   "use strict";
 
-  var Config, baseConfig;
-  function configure(aurelia, callback) {
-    var config = new Config();
-    config.configure(baseConfig);
-    if (typeof callback === 'function') {
-      callback(config);
-    }
-  }
+  var Config, Firebase;
 
-  _export('configure', configure);
+  _export('default', function (userConfig) {
+    var config = Config.create(userConfig);
+    var firebase = new Firebase(config);
+    var baseUrl = config.databaseURL;
+    return {
+      baseUrl: baseUrl,
+      queryEntityMapperFactory: function queryEntityMapperFactory(Entity) {
+        return function (data) {
+          var map = new Map();
+          for (var key in data) {
+            map.set(data[key], Entity);
+          }
+          return map;
+        };
+      },
+      fetchInterceptor: firebase.fetchInterceptor,
+      set: {
+        'firebase': firebase
+      }
+    };
+  });
 
   return {
-    setters: [function (_config) {
+    setters: [function (_consolePolyfill) {}, function (_config) {
       Config = _config.Config;
     }, function (_firebase) {
-      var _exportObj = {};
-      _exportObj.Firebase = _firebase.Firebase;
-
-      _export(_exportObj);
+      Firebase = _firebase.Firebase;
     }],
-    execute: function () {
-      baseConfig = {
-        apiKey: null,
-        authDomain: null,
-        databaseURL: null,
-        storageBucket: null
-      };
-    }
+    execute: function () {}
   };
 });
