@@ -1,5 +1,6 @@
-/coverage
-.idEA
-jspm_packages
-node_modules
+coverage/
+.idea/
+jspm_packages/
+nbproject/
+node_modules/
 *.iml

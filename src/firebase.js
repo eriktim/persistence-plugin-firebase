@@ -1,20 +1,16 @@
-import {inject} from 'aurelia-dependency-injection';
-import {getLogger} from 'aurelia-logging';
 import 'firebase';
 
 import {Authentication} from './authentication';
 import {Config} from './config';
 
-const PRIMARY_KEY = '_id';
+const PRIMARY_KEY = '__id__';
 
-@inject(Config)
 export class Firebase {
   authentication;
   native;
   url;
 
   constructor(config) {
-    this.logger = getLogger('Firebase');
     this.url = config.databaseURL;
     this.native = firebase;
     this.native.initializeApp(config.current);
@@ -31,10 +27,13 @@ export class Firebase {
           let [path, ...params] = request.url.split('?');
           let url = `${path}.json?auth=${[token, params.join('?')].join('&')}`;
           let init = {};
-          ['method', 'headers', 'body', 'mode', 'credentials',
+          ['method', 'headers', 'mode', 'credentials',
             'cache', 'redirect', 'referrer', 'integrity']
               .forEach(prop => init[prop] = request[prop]);
-          return fetch(url, init);
+          return request.blob().then(blob => {
+            init.body = blob;
+            return fetch(url, init);
+          });
         })
         .then(response => {
           if (response.ok) {
@@ -45,7 +44,7 @@ export class Firebase {
           }
           return null;
         })
-        .catch(err => this.logger.error('request failed', err))
+        .catch(err => console.error('request failed', err))
         .then(data => {
           if (!data) {
             return null;

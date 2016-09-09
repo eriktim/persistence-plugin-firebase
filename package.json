@@ -1,21 +1,22 @@
 {
-  "name": "aurelia-firebase-rest",
+  "name": "persistence-plugin-firebase",
   "version": "0.1.0",
-  "description": "Integrate the Firebase REST API with Aurelia.",
+  "description": "Integrate the Firebase REST API with Persitence.",
   "keywords": [
-    "aurelia",
+    "persistence",
+    "plugin",
     "firebase"
   ],
-  "homepage": "http://github.com/trenneman/aurelia-firebase-rest",
+  "homepage": "http://github.com/trenneman/persistence-plugin-firebase",
   "bugs": {
-    "url": "https://github.com/trenneman/aurelia-firebase-rest/issues"
+    "url": "https://github.com/trenneman/persistence-plugin-firebase/issues"
   },
   "license": "LGPL-3.0",
   "author": "Erik Timmers <e.timmers@gmail.com>",
   "main": "dist/commonjs/index.js",
   "repository": {
     "type": "git",
-    "url": "http://github.com/trenneman/aurelia-firebase-rest"
+    "url": "http://github.com/trenneman/persistence-plugin-firebase"
   },
   "devDependencies": {
     "aurelia-tools": "^0.1.22",
@@ -62,8 +63,6 @@
       "dist": "dist/amd"
     },
     "dependencies": {
-      "aurelia-dependency-injection": "^1.0.0",
-      "aurelia-logging": "^1.0.0",
       "firebase": "^3.3.0"
     },
     "devDependencies": {}

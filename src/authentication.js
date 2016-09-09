@@ -1,11 +1,7 @@
-import {getLogger} from 'aurelia-logging';
-
 export class Authentication {
   firebase;
-  logger;
 
   constructor(firebase) {
-    this.logger = getLogger('Authentication');
     this.firebase = firebase;
   }
 
@@ -19,20 +15,20 @@ export class Authentication {
   }
 
   signIn(email, password) {
-    this.logger.debug('trying to login...');
+    console.debug('trying to sign in...');
     return this.firebase.native.auth().signInWithEmailAndPassword(email, password)
       .then(result => {
-        this.logger.debug('user logged in successfully');
+        console.debug('user signed in successfully');
       })
       .catch(err => {
         let msg = 'authentication failed';
-        this.logger.error(err);
+        console.error(err);
         throw new Error(msg);
       });
   }
 
   signOut() {
     return this.firebase.native.auth().signOut()
-      .then(() => this.logger.debug('user logged out successfully'));
+      .then(() => console.debug('user signed out successfully'));
   }
 }
