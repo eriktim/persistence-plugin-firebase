@@ -63,6 +63,7 @@
       "dist": "dist/amd"
     },
     "dependencies": {
+      "console-polyfill": "^0.2.2",
       "firebase": "3.3.0"
     },
     "devDependencies": {}

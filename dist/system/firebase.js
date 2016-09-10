@@ -1,9 +1,9 @@
 'use strict';
 
-System.register(['firebase', './authentication'], function (_export, _context) {
+System.register(['firebase', './authentication', './config'], function (_export, _context) {
   "use strict";
 
-  var Authentication, _typeof, _createClass, PRIMARY_KEY, Firebase;
+  var Authentication, Config, _typeof, _createClass, PRIMARY_KEY, Firebase;
 
   function _toArray(arr) {
     return Array.isArray(arr) ? arr : Array.from(arr);
@@ -18,6 +18,8 @@ System.register(['firebase', './authentication'], function (_export, _context) {
   return {
     setters: [function (_firebase) {}, function (_authentication4) {
       Authentication = _authentication4.Authentication;
+    }, function (_config) {
+      Config = _config.Config;
     }],
     execute: function () {
       _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
@@ -47,9 +49,10 @@ System.register(['firebase', './authentication'], function (_export, _context) {
       PRIMARY_KEY = '__id__';
 
       _export('Firebase', Firebase = function () {
-        function Firebase(config) {
+        function Firebase(userConfig) {
           _classCallCheck(this, Firebase);
 
+          var config = Config.create(userConfig);
           this.url = config.databaseURL;
           this.native = firebase;
           this.native.initializeApp(config);
@@ -57,6 +60,27 @@ System.register(['firebase', './authentication'], function (_export, _context) {
         }
 
         _createClass(Firebase, [{
+          key: 'getPlugin',
+          value: function getPlugin() {
+            var baseUrl = this.url;
+            return {
+              name: 'firebase',
+              config: {
+                baseUrl: baseUrl,
+                queryEntityMapperFactory: function queryEntityMapperFactory(Entity) {
+                  return function (data) {
+                    var map = new Map();
+                    for (var key in data) {
+                      map.set(data[key], Entity);
+                    }
+                    return map;
+                  };
+                },
+                fetchInterceptor: this.fetchInterceptor
+              }
+            };
+          }
+        }, {
           key: 'isSignedIn',
           value: function isSignedIn() {
             var _authentication;
@@ -128,7 +152,7 @@ System.register(['firebase', './authentication'], function (_export, _context) {
                 (isArray ? data : [data]).forEach(function (obj) {
                   for (var key in obj) {
                     var value = obj[key];
-                    if ((typeof value === 'undefined' ? 'undefined' : _typeof(value)) === 'object' && value) {
+                    if ((typeof value === 'undefined' ? 'undefined' : _typeof(value)) === 'object' && value !== null) {
                       value[PRIMARY_KEY] = key;
                     }
                   }

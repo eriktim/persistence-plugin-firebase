@@ -1,4 +1,4 @@
-define(['exports', './authentication', 'firebase'], function (exports, _authentication4) {
+define(['exports', './authentication', './config', 'firebase'], function (exports, _authentication4, _config) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
@@ -43,9 +43,10 @@ define(['exports', './authentication', 'firebase'], function (exports, _authenti
   var PRIMARY_KEY = '__id__';
 
   var Firebase = exports.Firebase = function () {
-    function Firebase(config) {
+    function Firebase(userConfig) {
       _classCallCheck(this, Firebase);
 
+      var config = _config.Config.create(userConfig);
       this.url = config.databaseURL;
       this.native = firebase;
       this.native.initializeApp(config);
@@ -53,6 +54,27 @@ define(['exports', './authentication', 'firebase'], function (exports, _authenti
     }
 
     _createClass(Firebase, [{
+      key: 'getPlugin',
+      value: function getPlugin() {
+        var baseUrl = this.url;
+        return {
+          name: 'firebase',
+          config: {
+            baseUrl: baseUrl,
+            queryEntityMapperFactory: function queryEntityMapperFactory(Entity) {
+              return function (data) {
+                var map = new Map();
+                for (var key in data) {
+                  map.set(data[key], Entity);
+                }
+                return map;
+              };
+            },
+            fetchInterceptor: this.fetchInterceptor
+          }
+        };
+      }
+    }, {
       key: 'isSignedIn',
       value: function isSignedIn() {
         var _authentication;
@@ -124,7 +146,7 @@ define(['exports', './authentication', 'firebase'], function (exports, _authenti
             (isArray ? data : [data]).forEach(function (obj) {
               for (var key in obj) {
                 var value = obj[key];
-                if ((typeof value === 'undefined' ? 'undefined' : _typeof(value)) === 'object' && value) {
+                if ((typeof value === 'undefined' ? 'undefined' : _typeof(value)) === 'object' && value !== null) {
                   value[PRIMARY_KEY] = key;
                 }
               }

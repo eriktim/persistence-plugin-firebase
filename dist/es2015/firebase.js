@@ -1,12 +1,14 @@
 import 'firebase';
 
 import { Authentication } from './authentication';
+import { Config } from './config';
 
 const PRIMARY_KEY = '__id__';
 
 export let Firebase = class Firebase {
 
-  constructor(config) {
+  constructor(userConfig) {
+    let config = Config.create(userConfig);
     this.url = config.databaseURL;
     this.native = firebase;
     this.native.initializeApp(config);
@@ -49,13 +51,33 @@ export let Firebase = class Firebase {
         (isArray ? data : [data]).forEach(obj => {
           for (let key in obj) {
             let value = obj[key];
-            if (typeof value === 'object' && value) {
+            if (typeof value === 'object' && value !== null) {
               value[PRIMARY_KEY] = key;
             }
           }
         });
         return data;
       });
+    };
+  }
+
+  getPlugin() {
+    let baseUrl = this.url;
+    return {
+      name: 'firebase',
+      config: {
+        baseUrl,
+        queryEntityMapperFactory: Entity => {
+          return data => {
+            let map = new Map();
+            for (let key in data) {
+              map.set(data[key], Entity);
+            }
+            return map;
+          };
+        },
+        fetchInterceptor: this.fetchInterceptor
+      }
     };
   }
 

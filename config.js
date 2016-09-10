@@ -8,6 +8,7 @@ System.config({
   },
 
   map: {
+    "console-polyfill": "npm:console-polyfill@0.2.2",
     "firebase": "npm:firebase@3.3.2",
     "github:jspm/nodelibs-assert@0.1.0": {
       "assert": "npm:assert@1.4.1"
