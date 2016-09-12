@@ -100,34 +100,18 @@ define(['exports', './authentication', './config', 'firebase'], function (export
       get: function get() {
         var _this = this;
 
-        return function (request) {
-          if (!(request instanceof Request)) {
-            return Promise.resolve(request);
-          }
+        return function (url, init) {
+          var _url$split = url.split('?');
+
+          var _url$split2 = _toArray(_url$split);
+
+          var fullUri = _url$split2[0];
+
+          var params = _url$split2.slice(1);
+
           return _this.authentication.getToken().then(function (token) {
-            var _request$url$split = request.url.split('?');
-
-            var _request$url$split2 = _toArray(_request$url$split);
-
-            var path = _request$url$split2[0];
-
-            var params = _request$url$split2.slice(1);
-
-            var url = path + '.json?auth=' + [token, params.join('?')].join('&');
-            var init = {};
-            ['method', 'headers', 'mode', 'credentials', 'cache', 'redirect', 'referrer', 'integrity'].forEach(function (prop) {
-              return init[prop] = request[prop];
-            });
-            return Promise.resolve().then(function () {
-              if (!['GET', 'HEAD'].includes(request.method)) {
-                return request.blob();
-              }
-            }).then(function (blob) {
-              if (blob) {
-                init.body = blob;
-              }
-              return fetch(url, init);
-            });
+            var url = fullUri + '.json?auth=' + [token, params.join('?')].join('&');
+            return fetch(url, init);
           }).then(function (response) {
             if (response.ok) {
               var contentType = response.headers.get('content-type');

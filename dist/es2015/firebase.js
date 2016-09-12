@@ -16,25 +16,11 @@ export let Firebase = class Firebase {
   }
 
   get fetchInterceptor() {
-    return request => {
-      if (!(request instanceof Request)) {
-        return Promise.resolve(request);
-      }
+    return (url, init) => {
+      let [fullUri, ...params] = url.split('?');
       return this.authentication.getToken().then(token => {
-        let [path, ...params] = request.url.split('?');
-        let url = `${ path }.json?auth=${ [token, params.join('?')].join('&') }`;
-        let init = {};
-        ['method', 'headers', 'mode', 'credentials', 'cache', 'redirect', 'referrer', 'integrity'].forEach(prop => init[prop] = request[prop]);
-        return Promise.resolve().then(() => {
-          if (!['GET', 'HEAD'].includes(request.method)) {
-            return request.blob();
-          }
-        }).then(blob => {
-          if (blob) {
-            init.body = blob;
-          }
-          return fetch(url, init);
-        });
+        let url = fullUri + '.json?auth=' + [token, params.join('?')].join('&');
+        return fetch(url, init);
       }).then(response => {
         if (response.ok) {
           let contentType = response.headers.get('content-type');
